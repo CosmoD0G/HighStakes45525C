@@ -61,6 +61,8 @@ void paintRectangles(SelectorType mode) {
     }
 }
 
+// find the index of the button that was clicked
+// if no button was clicked, return 4
 int getClickRegion() {
     if ((Brain.Screen.xPosition() >= 3 && Brain.Screen.xPosition() <= 203) && 
     (Brain.Screen.yPosition() >= 50 && Brain.Screen.yPosition() <= 125)) {
@@ -80,6 +82,7 @@ int getClickRegion() {
 
 }
 
+// determine if a button exists for the region of the click
 bool isRegionValid(SelectorType mode, int region) {
     int num_regions = 0;
     switch (mode) {
@@ -90,20 +93,49 @@ bool isRegionValid(SelectorType mode, int region) {
     return region <= num_regions;
 }
 
+int selectAutonRoute() {
+    int current_click_region = 4;
+    int color = 4;
+    int side = 4;
+    int program = 4;
+
+    paintRectangles(COLOR);
+    while (true) {
+        current_click_region = getClickRegion();
+        if (isRegionValid(COLOR,current_click_region)) {
+            color = current_click_region;
+            break;
+        }
+    }
+    current_click_region = 4;
+    paintRectangles(SIDE);
+    while (true) {
+        current_click_region = getClickRegion();
+        if (isRegionValid(SIDE,current_click_region)) {
+            side = current_click_region;
+            break;
+        }
+    }
+    current_click_region = 4;
+    paintRectangles(PROGRAM);
+    while (true) {
+        current_click_region = getClickRegion();
+        if (isRegionValid(PROGRAM,current_click_region)) {
+            program = current_click_region;
+            break;
+        }
+    }
+
+}
+
 int main() {
     paintRectangles(COLOR);
     while(true) {
         wait(1,seconds);
+        Brain.Screen.setFillColor(transparent);
         Brain.Screen.print(getClickRegion());
           
     }
-
-    
-
-
-
-
-
 
     while(1) {
         
