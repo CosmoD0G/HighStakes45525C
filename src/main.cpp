@@ -15,13 +15,14 @@ using namespace std;
 brain Brain;
 controller Controller1;
 
+
 // define your global instances of motors and other devices here
 
 
 
 // should be true if creating a new route
 bool AUTON_TESTING_MODE = false;
-
+int route = 0;
 
 // enum to determine what colors to print on screen
 enum SelectorType {
@@ -126,16 +127,108 @@ int selectAutonRoute() {
         }
     }
 
+    switch (color) {
+        case 0: //red
+            switch (side) {
+                case 0: //left
+                    switch (program) {
+                        case 0:
+                            return 0;
+                            break;
+                        case 1:
+                            return 1;
+                            break;
+                    }
+                    break;
+                case 1: //right
+                    switch (program) {
+                        case 0:
+                            return 2;
+                            break;
+                        case 1:
+                            return 3;
+                            break;
+                    }
+                    break;
+            }
+            break;
+        case 1: //blue
+            switch (side) {
+                case 0: //left
+                    switch (program) {
+                        case 0:
+                            return 4;
+                            break;
+                        case 1:
+                            return 5;
+                            break;
+                    }
+                    break;
+                case 1: //right
+                    switch (program) {
+                        case 0:
+                            return 6;
+                            break;
+                        case 1:
+                            return 7;
+                            break;
+                    }
+                    break;
+            }
+            break;
+        case 3: //skills
+            break;
+        } 
+        
+    }
+
+void auton0() {
+    
+}
+
+void auton1() {
+
+}
+
+void auton2() {
+    
+}
+
+void auton3() {
+    
+}
+
+void auton4() {
+    
+}
+
+void auton5() {
+    
+}
+
+void auton6() {
+    
+}
+
+void auton7() {
+    
+}
+
+void AUTO() {
+    switch (route) {
+        case 0: auton0(); break;
+        case 1: auton1(); break;
+        case 2: auton2(); break;
+        case 3: auton3(); break;
+        case 4: auton4(); break;
+        case 5: auton5(); break;
+        case 6: auton6(); break;
+        case 7: auton7(); break;
+    }
 }
 
 int main() {
-    paintRectangles(COLOR);
-    while(true) {
-        wait(1,seconds);
-        Brain.Screen.setFillColor(transparent);
-        Brain.Screen.print(getClickRegion());
-          
-    }
+    route = selectAutonRoute();
 
     while(1) {
         
