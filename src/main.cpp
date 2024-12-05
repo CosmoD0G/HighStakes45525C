@@ -13,15 +13,16 @@ using namespace vex;
 // A global instance of vex::brain used for printing to the V5 brain screen
 vex::brain       Brain;
 vex::controller Controller = controller(primary);
-vex::motor M_6Bar = motor(PORT11,ratio18_1,false);
-vex::motor M_Intake = motor(PORT12,ratio36_1,false);
-vex::motor M_IntakeS1 = motor(PORT13,ratio18_1,false);
-vex::motor M_DriveLF = motor(PORT14,ratio18_1,false);
-vex::motor M_DriveLB = motor(PORT15,ratio18_1,false);
-vex::motor M_DriveRF = motor(PORT16,ratio18_1,false);
-vex::motor M_DriveRB = motor(PORT17,ratio18_1,false);
+vex::motor M_6Bar = motor(PORT3,ratio18_1,false);
+vex::motor M_Intake = motor(PORT9,ratio36_1,false);
+vex::motor M_IntakeS1 = motor(PORT4,ratio18_1,false);
+vex::motor M_DriveLF = motor(PORT8,ratio18_1,false);
+vex::motor M_DriveLB = motor(PORT7,ratio18_1,false);
+vex::motor M_DriveRF = motor(PORT6,ratio18_1,false);
+vex::motor M_DriveRB = motor(PORT5,ratio18_1,false);
 vex::motor_group MG_DriveLeft = motor_group(M_DriveLF,M_DriveLB);
 vex::motor_group MG_DriveRight = motor_group(M_DriveRF,M_DriveRB);
+vex::inertial INERTIAL = inertial(PORT2);
 
 vex::digital_out P_MogoA = digital_out(Brain.ThreeWirePort.A);
 vex::digital_out P_MogoB = digital_out(Brain.ThreeWirePort.B);
@@ -44,9 +45,11 @@ void intakeFWD() {
     if (intake_direction == 1) {
         M_Intake.stop();
         M_IntakeS1.stop();
+        intake_direction = 0;
     } else {
         M_Intake.spin(forward);
         M_IntakeS1.spin(forward);
+        intake_direction = 1;
     }
 }
 
@@ -54,9 +57,11 @@ void intakeREV() {
     if (intake_direction == -1) {
         M_Intake.stop();
         M_IntakeS1.stop();
+        intake_direction = 0;
     } else {
         M_Intake.spin(reverse);
         M_IntakeS1.spin(reverse);
+        intake_direction = -1;
     }
 }
 
@@ -84,15 +89,40 @@ void sweeperToggle() {
     }
 }
 
-void driverControl() {
-    while (true) {// driver control loop
-        MG_DriveLeft.setVelocity((Controller.Axis3.position() + Controller.Axis1.position()), percent);
-        MG_DriveRight.setVelocity((Controller.Axis3.position() - Controller.Axis1.position()), percent);
+int driver_direction = 1;
+void driverToggle() {
+    if (driver_direction == 1) {
+        driver_direction = -1;
+    } else {
+        driver_direction = 1;
     }
 }
 
+void driverControl() {
+    while (true) {// driver control loop
+
+        sixBar();
+
+        MG_DriveLeft.setVelocity(driver_direction*(Controller.Axis3.position() + Controller.Axis1.position()), percent);
+        MG_DriveRight.setVelocity(driver_direction*(Controller.Axis3.position() - Controller.Axis1.position()), percent);
+        MG_DriveLeft.spin(forward);
+        MG_DriveRight.spin(forward);
+    }
+
+}
+
+// -----AUTONOMOUS-----
+void autoMove() {
+
+}
+
+
+
+
 int main() {
 
+    M_Intake.setVelocity(300,rpm);
+    M_IntakeS1.setVelocity(200,rpm);
     // define competition driver and auto events
     vex::competition Comp = competition();
     Comp.autonomous(driverControl);
@@ -112,4 +142,5 @@ int main() {
     Controller.ButtonR1.pressed(intakeREV);
     Controller.ButtonDown.pressed(mogoToggle);
     Controller.ButtonB.pressed(sweeperToggle);
+    Controller.ButtonA.pressed(driverToggle);
 }
