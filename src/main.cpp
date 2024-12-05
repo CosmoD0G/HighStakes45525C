@@ -16,6 +16,12 @@ vex::controller Controller = controller(primary);
 vex::motor M_6Bar = motor(PORT11,ratio18_1,false);
 vex::motor M_Intake = motor(PORT12,ratio36_1,false);
 vex::motor M_IntakeS1 = motor(PORT13,ratio18_1,false);
+vex::motor M_DriveLF = motor(PORT14,ratio18_1,false);
+vex::motor M_DriveLB = motor(PORT15,ratio18_1,false);
+vex::motor M_DriveRF = motor(PORT16,ratio18_1,false);
+vex::motor M_DriveRB = motor(PORT17,ratio18_1,false);
+vex::motor_group MG_DriveLeft = motor_group(M_DriveLF,M_DriveLB);
+vex::motor_group MG_DriveRight = motor_group(M_DriveRF,M_DriveRB);
 
 vex::digital_out P_MogoA = digital_out(Brain.ThreeWirePort.A);
 vex::digital_out P_MogoB = digital_out(Brain.ThreeWirePort.B);
@@ -80,7 +86,8 @@ void sweeperToggle() {
 
 void driverControl() {
     while (true) {// driver control loop
-
+        MG_DriveLeft.setVelocity((Controller.Axis3.position() + Controller.Axis1.position()), percent);
+        MG_DriveRight.setVelocity((Controller.Axis3.position() - Controller.Axis1.position()), percent);
     }
 }
 
